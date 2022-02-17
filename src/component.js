@@ -28,10 +28,10 @@ class TextBoxComponent extends Component {
         animations: {
             blink: new Blink(this, 12, {
                 textColor: 0,
-                textBgColor: 10
+                textBgColor: 14
             },
                 {
-                    textColor: 10,
+                    textColor: 14,
                     textBgColor: 0
                 })
         },

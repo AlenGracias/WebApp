@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 /dist
+webpack.config.dev.js
+index.js
 
 
 # local env files
