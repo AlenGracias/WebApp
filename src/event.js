@@ -20,3 +20,5 @@ class EventHandler{
    this.callBack(eventData); 
   }
 }
+
+export {Event, EventHandler}

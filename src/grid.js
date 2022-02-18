@@ -1,6 +1,7 @@
 //const tile = require("./tile");
 import tile from "./tile";
 import { TextBoxComponent } from "./component";
+import {Event, EventHandler} from "./event";
 
 class Grid {
     tiles = [];
@@ -15,13 +16,14 @@ class Grid {
         this.constructTiles();
         this.ctx = ctx;
         this.dumbyTile = new tile(-1, -1);
-        this.initComponents();
         this.initEvents();
+        this.initComponents();
+       
     }
     getX() { return this.x }
     getY() { return this.y }
     initComponents() {
-        this.components.push(new TextBoxComponent(3, 3, 20, 13, "Hello, my name is Alex Garcia. What is your name?", { textColor: 10 }));
+        this.components.push(new TextBoxComponent(3, 3, 20, 13, "Hello, my name is Alex Garcia. What is your name?", { textColor: 10 , eventHandlers: [new EventHandler(this.events.click, function () {})]}));
         this.components[0].setAnimation();
     }
     initEvents() {
