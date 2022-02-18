@@ -1,7 +1,6 @@
 //const tile = require("./tile");
 import tile from "./tile";
-import { TextBoxComponent } from "./component";
-import {Event, EventHandler} from "./event";
+import { components, events } from "./comps";
 
 class Grid {
     tiles = [];
@@ -18,20 +17,28 @@ class Grid {
         this.dumbyTile = new tile(-1, -1);
         this.initEvents();
         this.initComponents();
-       
+
     }
+
+    convertXCoor(x) {
+        return Math.floor(x / this.screenWidth * this.x);
+    }
+
+    convertYCoor(y) {
+        return Math.floor(y / this.screenHeight * this.y);
+    }
+
     getX() { return this.x }
     getY() { return this.y }
     initComponents() {
-        this.components.push(new TextBoxComponent(3, 3, 20, 13, "Hello, my name is Alex Garcia. What is your name?", { textColor: 10 , eventHandlers: [new EventHandler(this.events.click, function () {})]}));
+        this.components = this.components.concat(Object.values(components));
+        console.log(this.components);
         this.components[0].setAnimation();
     }
     initEvents() {
-      this.events = {
-        click: new Event(),
-      }
+        this.events = events;
     }
-    
+
     update(w, h, mx, my) { //try to make more efficient
         let a = false;
         let b = false;
@@ -53,27 +60,25 @@ class Grid {
         this.renderComponents();
         this.drawScreen();
 
-        let closestX = Math.floor(mx / this.screenWidth * this.x);
-        let closestY = Math.floor(my / this.screenHeight * this.y);
 
-        this.ctx.fillText("█", closestX * 11.4, 20 + closestY * 22);
+        this.ctx.fillText("█", this.convertXCoor(mx) * 11.4, 20 + this.convertYCoor(my) * 22);
 
 
     }
     updateComponents() {
 
     }
-    findComponent(x,y){
-      let component = null;
-      this.components.forEach(e=> {
-        let _box = e.getBoundingBox();
-        
-        if((_box.x < x && _box.x+_box.w > x) && (_box.y < y && _box.y+_box.h > y))
-          component = e;
-      });
-      
-      return component;
-      
+    findComponent(x, y) {
+        let component = null;
+        this.components.forEach(e => {
+            let _box = e.getBoundingBox();
+
+            if ((_box.x < x && _box.x + _box.w > x) && (_box.y < y && _box.y + _box.h > y))
+                component = e;
+        });
+
+        return component;
+
     }
     renderComponents() {
         this.components.forEach(e => e.render(this));
@@ -92,9 +97,10 @@ class Grid {
                 }
                 this.ctx.fillStyle = Grid.colors[_tile.getData().color];
                 this.ctx.fillText(_tile.getData().char, i * 11.4, 20 + j * 22);
-
+                _tile.clearData();
             }
         }
+
     }
     constructTiles() {
         this.tiles = [];

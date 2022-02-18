@@ -1,4 +1,4 @@
-import { TextBox, Rect, AreaFill, AreaClear } from './asset';
+import { Render } from './asset';
 import { Blink } from './animation';
 
 class Component {
@@ -12,12 +12,23 @@ class Component {
             w,
             h,
             visible: true,
-            transparent: false
+            transparent: false,
+            relative: false,
+            parent: null,
+            children: []
         }
     }
-    
-    getBoundingBox(){
-      return {x:this.x,y:this.y,w:this.w,h:this.h};
+
+    alter(newData) {
+        this.data = { ...this.data, ...newData }
+    }
+
+    getData() {
+        return this.data;
+    }
+
+    getBoundingBox() {
+        return { x: this.x, y: this.y, w: this.w, h: this.h };
     }
 }
 
@@ -47,11 +58,8 @@ class TextBoxComponent extends Component {
         super(x, y, w, h);
         this.data = {
             ...this.data,
-            border: new Rect(x, y, w, h),
-            textBox: new TextBox(x + 1, y + 1, w - 2, h - 2, t),
-            bg: new AreaClear(x, y, w, h)
+            text: t
         }
-        this.xx = new AreaFill(x, y, w, h, " ");
 
         this.data = { ...this.data, ...TextBoxComponent.default, ...s };
 
@@ -71,13 +79,15 @@ class TextBoxComponent extends Component {
             d = { ...d, ...animationAug }
         }
 
+        let size = { x: d.x, y: d.y, w: d.w, h: d.h }
+
         if (!this.data.visible)
             return;
         if (!this.data.transparent)
-            this.data.bg.render(grid);
-        this.data.textBox.render(grid, { textColor: d.textColor, textBgColor: d.textBgColor });
+            Render.AreaClear(grid, size);
+        Render.TextBox(grid, { ...{ x: size.x + 1, y: size.y + 1, w: size.w - 2, h: size.h - 2 }, textColor: d.textColor, textBgColor: d.textBgColor, text: d.text });
         if (this.data.hasBorder)
-            this.data.border.render(grid, { color: d.borderColor });
+            Render.Rect(grid, { ...size, color: d.borderColor });
 
     }
 

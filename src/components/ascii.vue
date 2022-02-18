@@ -8,7 +8,7 @@
       v-bind:style="{ height: windowHeight, width: windowWidth }"
       style="background-color: black"
       v-on:mousemove="mouseover($event)"
-      v-on:click="click('hello')"
+      v-on:click="click($event)"
     >
     </canvas>
   </div>
@@ -61,8 +61,11 @@ export default {
       this.mouseY = event.clientY;
       //console.log(`${event.clientX},${event.clientX}`);
     },
-    click: function (h){
-      this.grid.events.click.trigger(h);
+    click: function (event) {
+      this.grid.events.click.trigger({
+        x: this.grid.convertXCoor(event.clientX),
+        y: this.grid.convertYCoor(event.clientY),
+      });
     },
     updateGrid() {
       this.grid.update(
