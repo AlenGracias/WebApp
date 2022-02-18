@@ -5,6 +5,7 @@ import { TextBoxComponent } from "./component";
 class Grid {
     tiles = [];
     components = [];
+    events = {};
     static colors = ["black", "maroon", "green", "olive", "navy", "purple", "teal", "silver", "gray", "red", "lime", "yellow", "blue", "fuchsia", "cyan", "white"];
     constructor(ctx, w, h) {
         this.x = Math.floor(w / (22 * 0.52));
@@ -15,6 +16,7 @@ class Grid {
         this.ctx = ctx;
         this.dumbyTile = new tile(-1, -1);
         this.initComponents();
+        this.initEvents();
     }
     getX() { return this.x }
     getY() { return this.y }
@@ -22,6 +24,12 @@ class Grid {
         this.components.push(new TextBoxComponent(3, 3, 20, 13, "Hello, my name is Alex Garcia. What is your name?", { textColor: 10 }));
         this.components[0].setAnimation();
     }
+    initEvents() {
+      this.events = {
+        click: new Event(),
+      }
+    }
+    
     update(w, h, mx, my) { //try to make more efficient
         let a = false;
         let b = false;
@@ -49,11 +57,21 @@ class Grid {
         this.ctx.fillText("█", closestX * 11.4, 20 + closestY * 22);
 
 
-
-
     }
     updateComponents() {
 
+    }
+    findComponent(x,y){
+      let component = null;
+      this.components.forEach(e=> {
+        let _box = e.getBoundingBox();
+        
+        if((_box.x < x && _box.x+_box.w > x) && (_box.y < y && _box.y+_box.h > y))
+          component = e;
+      });
+      
+      return component;
+      
     }
     renderComponents() {
         this.components.forEach(e => e.render(this));

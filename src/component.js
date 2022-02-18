@@ -12,8 +12,12 @@ class Component {
             w,
             h,
             visible: true,
-            transparent: false,
+            transparent: false
         }
+    }
+    
+    getBoundingBox(){
+      return {x:this.x,y:this.y,w:this.w,h:this.h};
     }
 }
 

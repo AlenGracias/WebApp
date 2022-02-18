@@ -8,6 +8,7 @@
       v-bind:style="{ height: windowHeight, width: windowWidth }"
       style="background-color: black"
       v-on:mousemove="mouseover($event)"
+      v-on:click="click('hello')"
     >
     </canvas>
   </div>
@@ -58,7 +59,10 @@ export default {
     mouseover: function (event) {
       this.mouseX = event.clientX;
       this.mouseY = event.clientY;
-      //console.log(`${x},${y}`);
+      //console.log(`${event.clientX},${event.clientX}`);
+    },
+    click: function (h){
+      this.grid.events.click.trigger(h);
     },
     updateGrid() {
       this.grid.update(
