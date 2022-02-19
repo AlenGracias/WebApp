@@ -1,6 +1,6 @@
 //const tile = require("./tile");
 import tile from "./tile";
-import { components, events } from "./comps";
+import { components, events, initAnimations } from "./comps";
 
 class Grid {
     tiles = [];
@@ -32,8 +32,7 @@ class Grid {
     getY() { return this.y }
     initComponents() {
         this.components = this.components.concat(Object.values(components));
-        console.log(this.components);
-        this.components[0].setAnimation();
+        initAnimations();
     }
     initEvents() {
         this.events = events;
@@ -68,21 +67,9 @@ class Grid {
     updateComponents() {
 
     }
-    findComponent(x, y) {
-        let component = null;
-        this.components.forEach(e => {
-            let _box = e.getBoundingBox();
-
-            if ((_box.x < x && _box.x + _box.w > x) && (_box.y < y && _box.y + _box.h > y))
-                component = e;
-        });
-
-        return component;
-
-    }
+   
     renderComponents() {
-        this.components.forEach(e => e.render(this));
-        this.components.forEach(e => e.updateAnimation());
+        this.components.forEach(e => {e.update(); e.render(this); e.updateAnimation()});
     }
     drawScreen() {
         this.ctx.clearRect(0, 0, this.screenWidth, this.screenHeight);

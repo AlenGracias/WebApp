@@ -1,5 +1,4 @@
 import { Render } from './asset';
-import { Blink } from './animation';
 
 class Component {
     static default = {
@@ -15,12 +14,17 @@ class Component {
             transparent: false,
             relative: false,
             parent: null,
-            children: []
+            children: [],
+            info: {updates:[]},                          
+            }
         }
-    }
+    
 
     alter(newData) {
-        this.data = { ...this.data, ...newData }
+        if(Object.keys(newData).includes("info")){
+          let _info = {...this.data.info, ...newData.info}
+          this.data = { ...this.data, ...newData, info: _info}
+          } else this.data = { ...this.data, ...newData}
     }
 
     getData() {
@@ -28,8 +32,28 @@ class Component {
     }
 
     getBoundingBox() {
-        return { x: this.x, y: this.y, w: this.w, h: this.h };
+        return { x: this.data.x, y: this.data.y, w: this.data.w, h: this.data.h };
     }
+    
+    inBoundingBox(x, y) {
+        let r = false;
+        let _box = this.getBoundingBox();
+        if ((_box.x < x && _box.x + _box.w > x) && (_box.y < y && _box.y + _box.h > y))
+          r=true;
+        
+
+        return r;
+
+    }
+    
+    update(){
+      if(this.data.info.updates != null){
+      if(Object.values(this.data.info.updates).length > 0){
+        for(let i = 0; i<Object.values(this.data.info.updates).length; i++){
+          
+          this.data.info.updates[i]();}
+      }
+    }}
 }
 
 class TextBoxComponent extends Component {
@@ -40,17 +64,8 @@ class TextBoxComponent extends Component {
         textBgColor: 0,
         borderColor: 15,
         hasBorder: true,
-        animations: {
-            blink: new Blink(this, 12, {
-                textColor: 0,
-                textBgColor: 14
-            },
-                {
-                    textColor: 14,
-                    textBgColor: 0
-                })
-        },
-        animationActive: null
+        animations: {},
+        animationActive: ""
 
     }
 
@@ -61,21 +76,18 @@ class TextBoxComponent extends Component {
             text: t
         }
 
-        this.data = { ...this.data, ...TextBoxComponent.default, ...s };
+        this.alter(TextBoxComponent.default)
+        this.alter(s);
 
 
-    }
-
-    setAnimation() {
-        this.data.animationActive = this.data.animations["blink"];
     }
 
     render(grid) {
 
         let d = this.data;
         //console.log(this.data.animationActive);
-        if (this.data.animationActive != null) {
-            let animationAug = this.data.animationActive.getFrame();
+        if (this.data.animationActive != "") {
+            let animationAug = this.data.animations[this.data.animationActive].getFrame();
             d = { ...d, ...animationAug }
         }
 
@@ -92,8 +104,8 @@ class TextBoxComponent extends Component {
     }
 
     updateAnimation() {
-        if (this.data.animationActive != null)
-            this.data.animationActive.moveFrame();
+        if (this.data.animationActive != "")
+            this.data.animations[this.data.animationActive].moveFrame();
     }
 
 
